@@ -1,8 +1,9 @@
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
 <tui-root>
   <header tuiNavigationHeader>
     <span tuiNavigationLogo>
-      <tui-icon icon="@tui.home" />
-      <span tuiFade>Dragonia</span>
+      <tui-icon icon="@tui.car" />
+      <span tuiFade>Street gonki</span>
     </span>
     <hr />
     @if (authService.currentUser?.accountType === 'ADMIN') {
@@ -28,59 +29,58 @@
   </header>
   <div [style.display]="'flex'">
     <aside [tuiNavigationAside]="expanded">
-    @if (authService.isAuthenticated) {
-        @if (expanded) {
-        <p tuiAsideItem>Special commands:</p>
-        }
-        <button
-          iconStart="@tui.sigma"
-          tuiAsideItem
-          type="button"
-          (click)="sumAges()"
-        >
-          Sum ages
-        </button>
-        <button
-          iconStart="@tui.sword"
-          tuiAsideItem
-          type="button"
-          (click)="showDragonWithGigachadKiller()"
-        >
-          Dragon with gigachad killer
-        </button>
-        <button
-          iconStart="@tui.search"
-          tuiAsideItem
-          type="button"
-          (click)="searchDragonsByName(searchQueryForm, dragonsTable)"
-        >
-          Search dragon by name
-        </button>
-        <button
-          iconStart="@tui.mountain"
-          tuiAsideItem
-          type="button"
-          (click)="showDragonInTheDeepestCave()"
-        >
-          Dragon in the deepest cave
-        </button>
-        <button
-          iconStart="@tui.users"
-          tuiAsideItem
-          type="button"
-          (click)="createNewKillersGang()"
-        >
-          New killers gang
-        </button>
-        <hr />
-        <button
-          iconStart="@tui.plus"
-          tuiAsideItem
-          type="button"
-          (click)="createNewDragon()"
-        >
-          Create new dragon
-        </button>
+      @if (authService.isAuthenticated) { @if (expanded) {
+      <p tuiAsideItem>Special commands:</p>
+      }
+      <button
+        iconStart="@tui.bomb"
+        tuiAsideItem
+        type="button"
+        (click)="removeVehiclesWithFuelConsumption(fuelConsumptionForm, 'all')"
+      >
+        Throw bomb
+      </button>
+      <button
+        iconStart="@tui.flame"
+        tuiAsideItem
+        type="button"
+        (click)="removeVehiclesWithFuelConsumption(fuelConsumptionForm, 'any')"
+      >
+        Burn the vehicle
+      </button>
+      <button
+        iconStart="@tui.fuel"
+        tuiAsideItem
+        type="button"
+        (click)="showFuelConsumptionsSet()"
+      >
+        Get fuel consumptions set
+      </button>
+      <button
+        iconStart="@tui.car-front"
+        tuiAsideItem
+        type="button"
+        (click)="findVehiclesByType(vehicleTypeForm, vehiclesTable)"
+      >
+        Get vehicles by type
+      </button>
+      <button
+        iconStart="@tui.life-buoy"
+        tuiAsideItem
+        type="button"
+        (click)="addWheelsToVehicleWithId(addWheelsToVehicleForm)"
+      >
+        Add wheels to vehicle
+      </button>
+      <hr />
+      <button
+        iconStart="@tui.plus"
+        tuiAsideItem
+        type="button"
+        (click)="createNewVehicle()"
+      >
+        Create new vehicle
+      </button>
       }
       <footer>
         <button
@@ -98,15 +98,43 @@
     </main>
   </div>
 
-  <ng-template #searchQueryForm let-context>
+  <ng-template #fuelConsumptionForm let-context>
     <tui-textfield class="tui-space_bottom-3">
-      <label tuiLabel>Name</label>
-      <input tuiTextfield [formControl]="searchDragonByNameControl" />
+      <label tuiLabel>Fuel consumption</label>
+      <input tuiTextfield [formControl]="fuelConsumptionControl" />
     </tui-textfield>
+    <button tuiButton type="button" (click)="context.complete()">Remove</button>
+  </ng-template>
+
+  <ng-template #addWheelsToVehicleForm let-context>
+    <tui-textfield class="tui-space_bottom-3">
+      <label tuiLabel>Vehicle ID</label>
+      <input tuiTextfield [formControl]="vehicleIdControl" />
+    </tui-textfield>
+    <tui-textfield class="tui-space_bottom-3">
+      <label tuiLabel>Wheels count</label>
+      <input tuiTextfield [formControl]="wheelsCountControl" />
+    </tui-textfield>
+    <button tuiButton type="button" (click)="context.complete()">Add</button>
+  </ng-template>
+
+  <ng-template #vehicleTypeForm let-context>
+    <tui-select
+      class="tui-form__row"
+      [formControl]="vehicleTypeControl"
+      tuiTextfieldSize="s"
+    >
+      Type
+      <input tuiTextfieldLegacy placeholder="Type" />
+      <tui-data-list-wrapper
+        *tuiDataList
+        [items]="['-', 'plane', 'submarine', 'motorcycle', 'spaceship']"
+      />
+    </tui-select>
     <button tuiButton type="button" (click)="context.complete()">Search</button>
   </ng-template>
 
-  <ng-template #dragonsTable let-context>
-    <app-home [inputData]="foundDragonsByName()"></app-home>
+  <ng-template #vehiclesTable let-context>
+    <app-home [inputData]="foundVehiclesByType()"></app-home>
   </ng-template>
 </tui-root>

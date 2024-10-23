@@ -1,4 +1,4 @@
-import { Dragon } from './models/dragon';
+import { Vehicle } from './models/vehicle';
 
 export type Filters<TEntity> = Partial<Record<keyof TEntity, string>>;
 
@@ -12,9 +12,9 @@ export type PaginatedRequest = {
   pageSize: number;
 };
 
-export type DragonsGetRequest = {
-  filters?: Filters<Dragon>;
-  sort?: SortedRequest<Dragon>;
+export type VehiclesGetRequest = {
+  filters?: Filters<Vehicle>;
+  sort?: SortedRequest<Vehicle>;
   pagination?: PaginatedRequest;
 };
 

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DragonFormComponent } from './dragon-form.component';
+import { DragonFormComponent } from './vehicle-form.component';
 
 describe('DragonFormComponent', () => {
   let component: DragonFormComponent;
@@ -8,9 +8,8 @@ describe('DragonFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DragonFormComponent]
-    })
-    .compileComponents();
+      imports: [DragonFormComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(DragonFormComponent);
     component = fixture.componentInstance;

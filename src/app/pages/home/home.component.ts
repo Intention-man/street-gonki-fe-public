@@ -36,19 +36,19 @@ import {
   TuiTextfield,
 } from '@taiga-ui/core';
 import { TuiAccordion, TuiChevron, TuiStatus } from '@taiga-ui/kit';
-import { Dragon } from '@dg-core/types/models/dragon';
-import {
-  DRAGON_SERVICE,
-  dragonServiceFactory,
-} from '@dg-core/di/dragon-service';
-import {
-  DragonFormComponent,
-  DragonFormDialogContext,
-} from '@dg-shared/components/dragon-form/dragon-form.component';
+import { Vehicle } from '@dg-core/types/models/vehicle';
 import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
-import { ActionWithDragon } from '@dg-core/types/action-with-dragon.types';
 import { AuthService } from '@dg-core/services/auth.service';
 import { AccountType } from '@dg-core/types/models/user';
+import {
+  VEHICLE_SERVICE,
+  vehicleServiceFactory,
+} from '@dg-core/di/vehicle-service';
+import { ActionWithVehicle } from '@dg-core/types/action-with-vehicle.types';
+import {
+  VehicleFormComponent,
+  VehicleFormDialogContext,
+} from '@dg-shared/components/vehicle-form/vehicle-form.component';
 
 @Component({
   selector: 'app-home',
@@ -78,8 +78,8 @@ import { AccountType } from '@dg-core/types/models/user';
   ],
   providers: [
     {
-      provide: DRAGON_SERVICE,
-      useFactory: dragonServiceFactory,
+      provide: VEHICLE_SERVICE,
+      useFactory: vehicleServiceFactory,
     },
   ],
   templateUrl: './home.component.html',
@@ -87,28 +87,30 @@ import { AccountType } from '@dg-core/types/models/user';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {
-  private readonly dragonService = inject(DRAGON_SERVICE);
+  private readonly vehicleService = inject(VEHICLE_SERVICE);
   private readonly dialogService = inject(TuiDialogService);
   private readonly injector = inject(INJECTOR);
   private readonly destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
 
-  private readonly DRAGONS_LIST_REFRESH_INTERVAL_MS = 5000;
+  private readonly VEHICLES_LIST_REFRESH_INTERVAL_MS = 5000;
 
-  readonly inputData = input<Dragon[] | null>(null);
+  readonly inputData = input<Vehicle[] | null>(null);
 
   readonly filterableColumns = [
     'id',
     'name',
-    'cave',
-    'age',
-    'color',
+    'coordinates',
     'type',
-    'character',
-    'head',
+    'enginePower',
+    'numberOfWheels',
+    'capacity',
+    'distanceTravelled',
+    'fuelConsumption',
+    'fuelType',
   ] as const;
   readonly filtersForm = new FormGroup<
-    Partial<Record<keyof Dragon, FormControl>>
+    Partial<Record<keyof Vehicle, FormControl>>
   >(
     this.filterableColumns.reduce(
       (prev, curr) => ({
@@ -119,42 +121,42 @@ export class HomeComponent {
     )
   );
   readonly filterFn = (item: object, value: object | null): boolean =>
-    !value || item.toString().includes(value.toString());
+    !value ||
+    item.toString().toLowerCase().includes(value.toString().toLowerCase());
   readonly isLoading = signal(false);
   readonly page = signal(0);
   readonly totalItems = signal(0);
-  readonly data = signal<Dragon[]>([]);
+  readonly data = signal<Vehicle[]>([]);
   readonly pageSize = 5;
-  readonly dragonColumns = [
+  readonly vehicleColumns = [
     'id',
     'name',
     'coordinates',
     'creationDate',
-    'cave',
-    'killer',
-    'age',
-    'color',
     'type',
-    'character',
-    'head',
+    'enginePower',
+    'numberOfWheels',
+    'capacity',
+    'distanceTravelled',
+    'fuelConsumption',
+    'fuelType',
   ] as const;
-  readonly columns = [...this.dragonColumns, 'actions'] as const;
+  readonly columns = [...this.vehicleColumns, 'actions'] as const;
   readonly columnNames = {
     id: 'ID',
     name: 'Name',
     coordinates: 'Coordinates',
     creationDate: 'Creation Date',
-    cave: 'Cave',
-    killer: 'Killer',
-    age: 'Age',
-    color: 'Color',
     type: 'Type',
-    character: 'Character',
-    head: 'Head',
-    owner: 'Owner',
+    enginePower: 'Engine power',
+    numberOfWheels: 'Number of wheels',
+    capacity: 'Capacity',
+    distanceTravelled: 'Distance travelled',
+    fuelConsumption: 'Fuel consumption',
+    fuelType: 'Fuel type',
     actions: 'Actions',
   };
-  readonly actionWithDragon = ActionWithDragon;
+  readonly actionWithVehicle = ActionWithVehicle;
 
   constructor() {
     effect(
@@ -168,13 +170,13 @@ export class HomeComponent {
 
         this.isLoading.set(true);
 
-        const getDragonListSubscription = merge(
-          interval(this.DRAGONS_LIST_REFRESH_INTERVAL_MS),
-          this.dragonService.refreshDragonList$
+        const getVehicleListSubscription = merge(
+          interval(this.VEHICLES_LIST_REFRESH_INTERVAL_MS),
+          this.vehicleService.refreshVehicleList$
         )
           .pipe(
             switchMap(() =>
-              this.dragonService.getDragonsList$({
+              this.vehicleService.getVehiclesList$({
                 filters: {}, // TODO: implement real filters and sorting
                 pagination: {
                   page: this.page(),
@@ -191,70 +193,70 @@ export class HomeComponent {
           });
 
         onCleanup(() => {
-          getDragonListSubscription.unsubscribe();
+          getVehicleListSubscription.unsubscribe();
         });
       },
       { allowSignalWrites: true }
     );
   }
 
-  edit(item: Dragon): void {
+  edit(item: Vehicle): void {
     this.dialogService
-      .open<{ item: Dragon; mode: ActionWithDragon }>(
-        new PolymorpheusComponent(DragonFormComponent, this.injector),
+      .open<{ item: Vehicle; mode: ActionWithVehicle }>(
+        new PolymorpheusComponent(VehicleFormComponent, this.injector),
         {
           data: {
             item,
-            mode: ActionWithDragon.Update,
-          } as DragonFormDialogContext,
+            mode: ActionWithVehicle.Update,
+          } as VehicleFormDialogContext,
           dismissible: true,
-          label: 'Edit dragon',
+          label: 'Edit vehicle',
         }
       )
       .pipe(tuiTakeUntilDestroyed(this.destroyRef))
       .subscribe({
-        complete: () => this.dragonService.refreshDragonList$.next(null),
+        complete: () => this.vehicleService.refreshVehicleList$.next(null),
       });
   }
 
-  remove(item: Dragon): void {
-    this.dragonService.removeDragon$(item).subscribe({
-      complete: () => this.dragonService.refreshDragonList$.next(null),
+  remove(item: Vehicle): void {
+    this.vehicleService.removeVehicle$(item).subscribe({
+      complete: () => this.vehicleService.refreshVehicleList$.next(null),
     });
   }
 
-  view(item: Dragon): void {
+  view(item: Vehicle): void {
     this.dialogService
-      .open<{ item: Dragon; mode: ActionWithDragon }>(
-        new PolymorpheusComponent(DragonFormComponent, this.injector),
+      .open<{ item: Vehicle; mode: ActionWithVehicle }>(
+        new PolymorpheusComponent(VehicleFormComponent, this.injector),
         {
           data: {
             item,
-            mode: ActionWithDragon.Read,
+            mode: ActionWithVehicle.Read,
           },
           dismissible: true,
-          label: 'View dragon',
+          label: 'View vehicle',
         }
       )
       .pipe(tuiTakeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
 
-  checkUserCanPerformActionWithDragon(
-    action: ActionWithDragon,
-    dragon: Dragon
+  checkUserCanPerformActionWithVehicle(
+    action: ActionWithVehicle,
+    vehicle: Vehicle
   ): boolean {
     const user = this.authService.currentUser!;
-    const isOwnDragon = dragon.owner.username === user.username;
+    const isOwnVehicle = vehicle.owner.username === user.username;
 
     switch (action) {
-      case ActionWithDragon.Update:
-        return isOwnDragon;
-      case ActionWithDragon.Delete:
+      case ActionWithVehicle.Update:
+        return isOwnVehicle;
+      case ActionWithVehicle.Delete:
         return (
           (user.accountType === AccountType.Admin &&
-            dragon.canBeEditedByAdmin) ||
-          isOwnDragon
+            vehicle.canBeEditedByAdmin) ||
+          isOwnVehicle
         );
       default:
         return true;

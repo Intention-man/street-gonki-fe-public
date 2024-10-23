@@ -6,7 +6,12 @@ import {
   RouterModule,
 } from '@angular/router';
 import { KeyValuePipe, NgForOf } from '@angular/common';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { TuiRepeatTimes, tuiTakeUntilDestroyed } from '@taiga-ui/cdk';
 import {
   TuiAlertService,
@@ -28,26 +33,29 @@ import {
   TuiBadgeNotification,
   TuiChevron,
   TuiDataListDropdownManager,
+  TuiDataListWrapper,
   TuiFade,
   TuiSwitch,
   TuiTabs,
 } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiHeader, TuiNavigation } from '@taiga-ui/layout';
 import { appRoutes } from './app.routes';
-import { DragonFormComponent } from '@dg-shared/components/dragon-form/dragon-form.component';
+import { VehicleFormComponent } from '@dg-shared/components/vehicle-form/vehicle-form.component';
 import {
   PolymorpheusComponent,
   PolymorpheusContent,
 } from '@taiga-ui/polymorpheus';
 import {
-  DRAGON_SERVICE,
-  dragonServiceFactory,
-} from '@dg-core/di/dragon-service';
-import { switchMap } from 'rxjs';
-import { Dragon } from '@dg-core/types/models/dragon';
+  VEHICLE_SERVICE,
+  vehicleServiceFactory,
+} from '@dg-core/di/vehicle-service';
+import { switchMap, tap } from 'rxjs';
+import { Vehicle, VehicleType } from '@dg-core/types/models/vehicle';
 import { HomeComponent } from './pages/home/home.component';
-import { ActionWithDragon } from '@dg-core/types/action-with-dragon.types';
+import { ActionWithVehicle } from '@dg-core/types/action-with-vehicle.types';
 import { AuthService } from '@dg-core/services/auth.service';
+import { RemoveVehiclesWithFuelConsumptionMode } from '@dg-core/services/abstract-vehicle.service';
+import { nullIfEquals } from '@dg-core/helpers/null-if-equals';
 
 @Component({
   standalone: true,
@@ -82,11 +90,13 @@ import { AuthService } from '@dg-core/services/auth.service';
     TuiTextfield,
     ReactiveFormsModule,
     HomeComponent,
+    TuiDataList,
+    TuiDataListWrapper,
   ],
   providers: [
     {
-      provide: DRAGON_SERVICE,
-      useFactory: dragonServiceFactory,
+      provide: VEHICLE_SERVICE,
+      useFactory: vehicleServiceFactory,
     },
   ],
   selector: 'app-root',
@@ -97,7 +107,7 @@ export class AppComponent {
   protected readonly dialogService = inject(TuiDialogService);
   protected readonly injector = inject(INJECTOR);
   protected readonly destroyRef = inject(DestroyRef);
-  protected readonly dragonService = inject(DRAGON_SERVICE);
+  protected readonly vehicleService = inject(VEHICLE_SERVICE);
   protected readonly alertService = inject(TuiAlertService);
   protected readonly authService = inject(AuthService);
   protected readonly router = inject(Router);
@@ -106,88 +116,56 @@ export class AppComponent {
   protected open = false;
   protected switch = false;
   protected readonly routes = appRoutes;
-  protected readonly searchDragonByNameControl = new FormControl('');
-  protected readonly foundDragonsByName = signal<Dragon[]>([]);
+  protected readonly foundVehiclesByType = signal<Vehicle[]>([]);
 
-  createNewDragon(): void {
+  protected readonly fuelConsumptionControl = new FormControl<number>(0);
+  protected readonly vehicleIdControl = new FormControl<number>(
+    1,
+    Validators.required
+  );
+  protected readonly wheelsCountControl = new FormControl<number>(
+    0,
+    Validators.required
+  );
+  protected readonly vehicleTypeControl = new FormControl<VehicleType | '-'>(
+    VehicleType.Motorcycle
+  );
+
+  createNewVehicle(): void {
     this.dialogService
-      .open<{ mode: ActionWithDragon }>(
-        new PolymorpheusComponent(DragonFormComponent, this.injector),
+      .open<{ mode: ActionWithVehicle }>(
+        new PolymorpheusComponent(VehicleFormComponent, this.injector),
         {
           data: {
-            mode: ActionWithDragon.Create,
+            mode: ActionWithVehicle.Create,
           },
           dismissible: true,
-          label: 'Create dragon',
+          label: 'Create vehicle',
         }
       )
       .pipe(tuiTakeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => this.dragonService.refreshDragonList$.next(null), // TODO: не работает
+        next: () => this.vehicleService.refreshVehicleList$.next(null), // TODO: не работает
       });
   }
 
-  sumAges(): void {
-    this.dragonService
-      .getSumOfAges$()
-      .pipe(
-        switchMap((sum) =>
-          this.dialogService.open(sum, {
-            label: "Sum of every objects' ages",
-            size: 's',
-          })
-        ),
-        tuiTakeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
-  }
-
-  showDragonWithGigachadKiller(): void {
-    this.dragonService
-      .getDragonWithGigachadKiller$()
-      .pipe(
-        switchMap((item) =>
-          this.dialogService.open<{ item: Dragon; mode: ActionWithDragon }>(
-            new PolymorpheusComponent(DragonFormComponent, this.injector),
-            {
-              data: {
-                item,
-                mode: ActionWithDragon.Read,
-              },
-              dismissible: true,
-              label: 'Dragon with gigachad killer',
-            }
-          )
-        ),
-        tuiTakeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
-  }
-
-  searchDragonsByName(
-    searchQueryForm: PolymorpheusContent<TuiDialogContext>,
-    dragonsTable: PolymorpheusContent<TuiDialogContext>
+  removeVehiclesWithFuelConsumption(
+    fuelConsumptionForm: PolymorpheusContent<TuiDialogContext>,
+    mode: RemoveVehiclesWithFuelConsumptionMode
   ): void {
     this.dialogService
-      .open(searchQueryForm, { label: 'Search' })
+      .open(fuelConsumptionForm, {
+        label: 'Remove by fuel consumption',
+      })
       .pipe(tuiTakeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
-          const query = this.searchDragonByNameControl.value;
-          if (!query) {
-            return;
-          }
+          const query = this.fuelConsumptionControl.value!;
 
-          this.dragonService
-            .searchDragonsByName$(query)
+          this.vehicleService
+            .removeVehiclesWithFuelConsumption$(query, mode)
             .pipe(
-              switchMap((dragons) => {
-                this.foundDragonsByName.set(dragons);
-                return this.dialogService.open(dragonsTable, {
-                  label: 'Results',
-                  size: 'auto',
-                });
-              }),
+              switchMap(() => this.alertService.open('Removed')),
               tuiTakeUntilDestroyed(this.destroyRef)
             )
             .subscribe();
@@ -195,43 +173,64 @@ export class AppComponent {
       });
   }
 
-  showDragonInTheDeepestCave(): void {
-    this.dragonService
-      .getDragonInTheDeepestCave$()
+  showFuelConsumptionsSet(): void {
+    this.vehicleService
+      .getFuelConsumptionSet$()
       .pipe(
-        switchMap((item) =>
-          this.dialogService.open<{ item: Dragon; mode: ActionWithDragon }>(
-            new PolymorpheusComponent(DragonFormComponent, this.injector),
-            {
-              data: {
-                item,
-                mode: ActionWithDragon.Read,
-              },
-              dismissible: true,
-              label: 'Dragon in the deepest cave',
-            }
-          )
+        switchMap((set) =>
+          this.dialogService.open(set.toString(), {
+            label: 'Fuel consumptions set',
+          })
         ),
         tuiTakeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
   }
 
-  createNewKillersGang(): void {
-    this.dragonService
-      .createDragonKillersGang$()
+  findVehiclesByType(
+    vehicleTypeForm: PolymorpheusContent<TuiDialogContext>,
+    vehiclesTable: PolymorpheusContent<TuiDialogContext>
+  ): void {
+    this.dialogService
+      .open(vehicleTypeForm, {
+        label: 'Find by vehicle type',
+      })
       .pipe(tuiTakeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
-          this.alertService
-            .open('New killers gang was created')
-            .pipe(tuiTakeUntilDestroyed(this.destroyRef))
+          const query = nullIfEquals(this.vehicleTypeControl.value, '-');
+
+          this.vehicleService
+            .getVehiclesByType$(query as VehicleType | null)
+            .pipe(
+              tap((vehicles) => this.foundVehiclesByType.set(vehicles)),
+              switchMap(() => this.dialogService.open(vehiclesTable)),
+              tuiTakeUntilDestroyed(this.destroyRef)
+            )
             .subscribe();
         },
-        error: () => {
-          this.alertService
-            .open('Error when creating killers gang', { appearance: 'error' })
-            .pipe(tuiTakeUntilDestroyed(this.destroyRef))
+      });
+  }
+
+  addWheelsToVehicleWithId(
+    vehicleIdForm: PolymorpheusContent<TuiDialogContext>
+  ): void {
+    this.dialogService
+      .open(vehicleIdForm, {
+        label: 'Add wheels to vehicle',
+      })
+      .pipe(tuiTakeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        complete: () => {
+          const id = this.fuelConsumptionControl.value!;
+          const wheelsCount = this.wheelsCountControl.value!;
+
+          this.vehicleService
+            .addWheelsToVehicle$(id, wheelsCount)
+            .pipe(
+              switchMap(() => this.alertService.open('Added')),
+              tuiTakeUntilDestroyed(this.destroyRef)
+            )
             .subscribe();
         },
       });

@@ -1,11 +1,9 @@
 import { PaginatedResponse } from '@dg-core/types/response.types';
 import {
   Coordinates,
-  Dragon,
-  DragonCave,
-  DragonHead,
-  Person,
-} from '@dg-core/types/models/dragon';
+  Vehicle,
+  VehicleType,
+} from '@dg-core/types/models/vehicle';
 import {
   BehaviorSubject,
   distinct,
@@ -18,44 +16,44 @@ import {
   PaginatedRequest,
   SortedRequest,
   Filters,
-  DragonsGetRequest,
+  VehiclesGetRequest,
 } from '@dg-core/types/request.types';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Model } from '@dg-core/types/models/model';
 
-export abstract class AbstractDragonService {
+export type RemoveVehiclesWithFuelConsumptionMode = 'all' | 'any';
+
+export abstract class AbstractVehicleService {
   protected readonly http = inject(HttpClient);
 
-  readonly refreshDragonList$ = new BehaviorSubject(null);
+  readonly refreshVehicleList$ = new BehaviorSubject(null);
 
-  abstract getDragonsList$(
-    requestParams: DragonsGetRequest
-  ): Observable<PaginatedResponse<Dragon>>;
-
-  abstract getPeopleList$(): Observable<Person[]>;
+  abstract getVehiclesList$(
+    requestParams: VehiclesGetRequest
+  ): Observable<PaginatedResponse<Vehicle>>;
 
   abstract getCoordinatesList$(): Observable<Coordinates[]>;
 
-  abstract getDragonHeadsList$(): Observable<DragonHead[]>;
+  abstract createVehicle$(vehicle: Vehicle): Observable<void>;
 
-  abstract getDragonCavesList$(): Observable<DragonCave[]>;
+  abstract updateVehicle$(updatedVehicle: Vehicle): Observable<void>;
 
-  abstract createDragon$(dragon: Dragon): Observable<void>;
+  abstract removeVehicle$(vehicle: Vehicle): Observable<void>;
 
-  abstract updateDragon$(updatedDragon: Dragon): Observable<void>;
+  abstract removeVehiclesWithFuelConsumption$(
+    fuelConsumption: number,
+    mode: RemoveVehiclesWithFuelConsumptionMode
+  ): Observable<void>;
 
-  abstract removeDragon$(dragon: Dragon): Observable<void>;
+  abstract getFuelConsumptionSet$(): Observable<number[]>;
 
-  abstract getSumOfAges$(): Observable<number>;
+  abstract getVehiclesByType$(type: VehicleType | null): Observable<Vehicle[]>;
 
-  abstract getDragonWithGigachadKiller$(): Observable<Dragon>;
-
-  abstract searchDragonsByName$(name: string): Observable<Dragon[]>;
-
-  abstract getDragonInTheDeepestCave$(): Observable<Dragon>;
-
-  abstract createDragonKillersGang$(): Observable<void>;
+  abstract addWheelsToVehicle$(
+    id: number,
+    wheelsCount: number
+  ): Observable<void>;
 
   protected paginate<T>(data: T[], pagination: PaginatedRequest): T[] {
     const start = pagination.page * pagination.pageSize;
@@ -90,23 +88,23 @@ export abstract class AbstractDragonService {
   }
 
   protected getDependenciesList$(
-    dependencyName: keyof Dragon
+    dependencyName: keyof Vehicle
   ): Observable<Model[]> {
-    return this.getDragonsList$({}).pipe(
+    return this.getVehiclesList$({}).pipe(
       map((response) => response.data),
-      mergeMap((dragons) => dragons),
-      map((dragons) => dragons[dependencyName]),
+      mergeMap((vehicles) => vehicles),
+      map((vehicles) => vehicles[dependencyName]),
       distinct((dependency) => dependency?.toString()),
       map((dependency) => dependency as Model),
       toArray()
     );
   }
 
-  protected processDragonsList(
-    dragons: Dragon[],
-    requestParams: DragonsGetRequest
-  ): PaginatedResponse<Dragon> {
-    let data = dragons;
+  protected processVehiclesList(
+    vehicles: Vehicle[],
+    requestParams: VehiclesGetRequest
+  ): PaginatedResponse<Vehicle> {
+    let data = vehicles;
     const total = data.length;
 
     if (requestParams.pagination) {

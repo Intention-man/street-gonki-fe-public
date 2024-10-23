@@ -1,0 +1,152 @@
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
+@if (isLoading()) {
+<div class="tui-form__loader">
+  <tui-loader></tui-loader>
+</div>
+} @else {
+<form [formGroup]="vehicleForm!" class="main-form">
+  @if (context.data.mode === 'read') {
+  <tui-textfield class="tui-form__row">
+    <label tuiLabel>ID</label>
+    <input tuiTextfield formControlName="id" [readOnly]="true" />
+  </tui-textfield>
+  }
+  <!--  -->
+  @if (context.data.mode === 'read') {
+  <tui-input-date
+    formControlName="creationDate"
+    class="tui-form__row"
+    [readOnly]="true"
+  >
+    Creation Date
+    <input placeholder="Placeholder" tuiTextfieldLegacy [readOnly]="true" />
+    <span class="tui-required"></span>
+  </tui-input-date>
+  }
+
+  <tui-textfield class="tui-form__row">
+    <label tuiLabel>Name</label>
+    <input tuiTextfield formControlName="name" />
+  </tui-textfield>
+  <tui-error formControlName="name" [error]="[] | tuiFieldError | async" />
+
+  <div formGroupName="coordinates" class="inner-form">
+    <h3 class="tui-form__header">Coordinates</h3>
+
+    @if (isEditable) {
+    <tui-select
+      class="tui-form__row"
+      formControlName="existing"
+      tuiTextfieldSize="s"
+    >
+      Coordinates
+      <input tuiTextfieldLegacy placeholder="Coordinates" />
+      <tui-data-list-wrapper *tuiDataList [items]="coordinates() ?? []" />
+    </tui-select>
+    } @else {
+    <div class="tui-form__row tui-form__row_multi-fields">
+      <tui-textfield class="tui-form__multi-field">
+        <label tuiLabel>X</label>
+        <input tuiTextfield formControlName="x" />
+      </tui-textfield>
+
+      <tui-textfield class="tui-form__multi-field">
+        <label tuiLabel>Y</label>
+        <input tuiTextfield formControlName="y" />
+      </tui-textfield>
+    </div>
+    }
+  </div>
+
+  <tui-select
+    class="tui-form__row"
+    formControlName="color"
+    tuiTextfieldSize="s"
+  >
+    Type
+    <input tuiTextfieldLegacy placeholder="Color" />
+    <tui-data-list-wrapper
+      *tuiDataList
+      [items]="['plane', 'submarine', 'motorcycle', 'spaceship']"
+    />
+  </tui-select>
+
+  <tui-input-number formControlName="age"> Age </tui-input-number>
+  <tui-error formControlName="age" [error]="[] | tuiFieldError | async" />
+
+  <tui-input-number formControlName="enginePower">Engine pow</tui-input-number>
+  <tui-error
+    formControlName="enginePower"
+    [error]="[] | tuiFieldError | async"
+  />
+
+  <tui-input-number formControlName="numberOfWheels"
+    >Nmber of wheels</tui-input-number
+  >
+  <tui-error
+    formControlName="numberOfWheels"
+    [error]="[] | tuiFieldError | async"
+  />
+
+  <tui-input-number formControlName="distanceTravelled"
+    >Distance travelled</tui-input-number
+  >
+  <tui-error
+    formControlName="distanceTravelled"
+    [error]="[] | tuiFieldError | async"
+  />
+
+  <tui-input-number formControlName="distanceTravelled"
+    >Fuel consumption</tui-input-number
+  >
+  <tui-error
+    formControlName="distanceTravelled"
+    [error]="[] | tuiFieldError | async"
+  />
+
+  <tui-select
+    class="tui-form__row"
+    formControlName="color"
+    tuiTextfieldSize="s"
+  >
+    Fuel Type
+    <input tuiTextfieldLegacy placeholder="Color" />
+    <tui-data-list-wrapper
+      *tuiDataList
+      [items]="['gasoline', 'alcohol', 'nuclear']"
+    />
+  </tui-select>
+
+  @if (context.data.mode === 'create') {
+  <label class="checkbox">
+    <input tuiCheckbox type="checkbox" formControlName="canBeEditedByAdmin" />
+    <span>Can be edited by admin</span>
+  </label>
+  }
+  <!--  -->
+  @if (isEditable) {
+  <div class="tui-form__buttons">
+    <button
+      size="l"
+      tuiButton
+      type="submit"
+      class="tui-form__button"
+      [disabled]="!vehicleForm?.valid"
+      (click)="save()"
+    >
+      Submit
+    </button>
+    <button
+      appearance="flat"
+      size="l"
+      tuiButton
+      type="button"
+      class="tui-form__button"
+      (click)="cancel()"
+    >
+      Cancel
+    </button>
+  </div>
+  }
+</form>
+}

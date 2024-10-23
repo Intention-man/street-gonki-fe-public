@@ -1,4 +1,4 @@
-export enum ActionWithDragon {
+export enum ActionWithVehicle {
   Create = 'create',
   Read = 'read',
   Update = 'update',

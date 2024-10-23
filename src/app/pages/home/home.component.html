@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
 <ng-container tuiTableFilters>
   <tui-accordion-item class="filters__accordion">
     Filters
@@ -38,7 +39,7 @@
         [data]="sortedData"
       >
         <tr *ngFor="let item of sortedData | tuiTableFilters | async" tuiTr>
-          @for (column of dragonColumns; track column) {
+          @for (column of vehicleColumns; track column) {
           <td *tuiCell="column" tuiTd>
             {{ item[column] }}
           </td>
@@ -53,8 +54,8 @@
                 type="button"
                 (click)="edit(item)"
                 [disabled]="
-                  !checkUserCanPerformActionWithDragon(
-                    actionWithDragon.Update,
+                  !checkUserCanPerformActionWithVehicle(
+                    actionWithVehicle.Update,
                     item
                   )
                 "
@@ -69,8 +70,8 @@
                 type="button"
                 (click)="remove(item)"
                 [disabled]="
-                  !checkUserCanPerformActionWithDragon(
-                    actionWithDragon.Delete,
+                  !checkUserCanPerformActionWithVehicle(
+                    actionWithVehicle.Delete,
                     item
                   )
                 "
@@ -85,8 +86,8 @@
                 type="button"
                 (click)="view(item)"
                 [disabled]="
-                  !checkUserCanPerformActionWithDragon(
-                    actionWithDragon.Read,
+                  !checkUserCanPerformActionWithVehicle(
+                    actionWithVehicle.Read,
                     item
                   )
                 "
