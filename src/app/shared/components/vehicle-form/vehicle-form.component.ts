@@ -129,7 +129,11 @@ export class VehicleFormComponent {
           creationDate: [vehicle.creationDate, Validators.required], // Default to current date
           type: [vehicle.type],
           enginePower: [vehicle.enginePower, Validators.min(1)],
+          numberOfWheels: [vehicle.numberOfWheels, Validators.min(1)],
           capacity: [vehicle.capacity, Validators.min(1)],
+          distanceTravelled: [vehicle.distanceTravelled, Validators.min(1)],
+          fuelConsumption: [vehicle.fuelConsumption, Validators.min(0.1)],
+          fuelType: [vehicle.fuelType, Validators.required],
           canBeEditedByAdmin: [false],
         });
 
@@ -151,13 +155,13 @@ export class VehicleFormComponent {
     const vehicle: Vehicle = new Vehicle(
       formValues.name,
       formValues.coordinates.existing,
-      formValues.cave.existing,
-      formValues.color,
-      formValues.character,
-      formValues.head.existing,
-      parseInt(formValues.age),
       formValues.type,
-      formValues.killer.existing,
+      parseInt(formValues.enginePower),
+      parseInt(formValues.numberOfWheels),
+      parseInt(formValues.capacity),
+      parseInt(formValues.distanceTravelled),
+      parseFloat(formValues.fuelConsumption),
+      formValues.fuelType.existing,
       owner,
       formValues.canBeEditedByAdmin,
       null,

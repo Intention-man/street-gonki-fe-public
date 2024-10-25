@@ -60,19 +60,16 @@
 
   <tui-select
     class="tui-form__row"
-    formControlName="color"
+    formControlName="type"
     tuiTextfieldSize="s"
   >
     Type
-    <input tuiTextfieldLegacy placeholder="Color" />
+    <input tuiTextfieldLegacy placeholder="Type" />
     <tui-data-list-wrapper
       *tuiDataList
       [items]="['plane', 'submarine', 'motorcycle', 'spaceship']"
     />
   </tui-select>
-
-  <tui-input-number formControlName="age"> Age </tui-input-number>
-  <tui-error formControlName="age" [error]="[] | tuiFieldError | async" />
 
   <tui-input-number formControlName="enginePower">Engine pow</tui-input-number>
   <tui-error
@@ -81,7 +78,7 @@
   />
 
   <tui-input-number formControlName="numberOfWheels"
-    >Nmber of wheels</tui-input-number
+    >Number of wheels</tui-input-number
   >
   <tui-error
     formControlName="numberOfWheels"
@@ -96,21 +93,21 @@
     [error]="[] | tuiFieldError | async"
   />
 
-  <tui-input-number formControlName="distanceTravelled"
+  <tui-input-number formControlName="fuelConsumption"
     >Fuel consumption</tui-input-number
   >
   <tui-error
-    formControlName="distanceTravelled"
+    formControlName="fuelConsumption"
     [error]="[] | tuiFieldError | async"
   />
 
   <tui-select
     class="tui-form__row"
-    formControlName="color"
+    formControlName="fuelType"
     tuiTextfieldSize="s"
   >
     Fuel Type
-    <input tuiTextfieldLegacy placeholder="Color" />
+    <input tuiTextfieldLegacy placeholder="Fuel type" />
     <tui-data-list-wrapper
       *tuiDataList
       [items]="['gasoline', 'alcohol', 'nuclear']"

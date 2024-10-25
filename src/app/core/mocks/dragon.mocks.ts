@@ -11,7 +11,7 @@
 //   Location,
 // } from '@dg-core/types/models/dragon';
 
-import { Dragon } from '@dg-core/types/models/vehicle';
+// import { Dragon } from '@dg-core/types/models/vehicle';
 
 // export const mockDragons: Dragon[] = [
 //   new Dragon({
@@ -138,4 +138,4 @@ import { Dragon } from '@dg-core/types/models/vehicle';
 //   }),
 // ];
 
-export const mockDragons: Dragon[] = [];
+// export const mockDragons: Dragon[] = [];
