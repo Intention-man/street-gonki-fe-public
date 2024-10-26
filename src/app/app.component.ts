@@ -56,6 +56,10 @@ import { ActionWithVehicle } from '@dg-core/types/action-with-vehicle.types';
 import { AuthService } from '@dg-core/services/auth.service';
 import { RemoveVehiclesWithFuelConsumptionMode } from '@dg-core/services/abstract-vehicle.service';
 import { nullIfEquals } from '@dg-core/helpers/null-if-equals';
+import {
+  TuiSelectModule,
+  TuiTextfieldControllerModule,
+} from '@taiga-ui/legacy';
 
 @Component({
   standalone: true,
@@ -92,6 +96,8 @@ import { nullIfEquals } from '@dg-core/helpers/null-if-equals';
     HomeComponent,
     TuiDataList,
     TuiDataListWrapper,
+    TuiSelectModule,
+    TuiTextfieldControllerModule,
   ],
   providers: [
     {
