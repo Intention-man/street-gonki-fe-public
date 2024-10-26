@@ -100,13 +100,9 @@ export class VehicleService extends AbstractVehicleService {
     const url = `${environment.apiUrl}/vehicles/find-by-type`;
 
     return this.http
-      .post<VehicleGetDao[]>(
-        url,
-        { type },
-        {
-          headers: this.authService.getAuthHeaders(),
-        }
-      )
+      .post<VehicleGetDao[]>(url, type, {
+        headers: this.authService.getAuthHeaders(),
+      })
       .pipe(
         mergeMap((dao) => dao),
         map((dao) => Vehicle.fromGetDao(dao)),
@@ -115,13 +111,14 @@ export class VehicleService extends AbstractVehicleService {
   }
 
   override addWheelsToVehicle$(id: number, wheels: number): Observable<void> {
-    const url = `${environment.apiUrl}/add-wheels/${id}`;
+    const url = `${environment.apiUrl}/vehicles/add-wheels/${id}`;
 
     return this.http.post<void>(
       url,
-      { additionalWheels: wheels },
+      {},
       {
         headers: this.authService.getAuthHeaders(),
+        params: { additionalWheels: wheels },
       }
     );
   }

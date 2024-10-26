@@ -36,7 +36,10 @@
         iconStart="@tui.bomb"
         tuiAsideItem
         type="button"
-        (click)="removeVehiclesWithFuelConsumption(fuelConsumptionForm, 'all')"
+        (click)="
+          openDialog(fuelConsumptionForm, 'Bomb all');
+          removeVehicleByFuelMode.set('all')
+        "
       >
         Throw bomb
       </button>
@@ -44,7 +47,10 @@
         iconStart="@tui.flame"
         tuiAsideItem
         type="button"
-        (click)="removeVehiclesWithFuelConsumption(fuelConsumptionForm, 'any')"
+        (click)="
+          openDialog(fuelConsumptionForm, 'Burn it');
+          removeVehicleByFuelMode.set('any')
+        "
       >
         Burn the vehicle
       </button>
@@ -60,7 +66,7 @@
         iconStart="@tui.car-front"
         tuiAsideItem
         type="button"
-        (click)="findVehiclesByType(vehicleTypeForm, vehiclesTable)"
+        (click)="openDialog(vehicleTypeForm, 'Get by type')"
       >
         Get vehicles by type
       </button>
@@ -68,7 +74,7 @@
         iconStart="@tui.life-buoy"
         tuiAsideItem
         type="button"
-        (click)="addWheelsToVehicleWithId(addWheelsToVehicleForm)"
+        (click)="openDialog(addWheelsToVehicleForm, 'Add wheels')"
       >
         Add wheels to vehicle
       </button>
@@ -103,7 +109,13 @@
       <label tuiLabel>Fuel consumption</label>
       <input tuiTextfield [formControl]="fuelConsumptionControl" />
     </tui-textfield>
-    <button tuiButton type="button" (click)="context.complete()">Remove</button>
+    <button
+      tuiButton
+      type="button"
+      (click)="removeVehiclesWithFuelConsumption(); context.complete()"
+    >
+      Remove
+    </button>
   </ng-template>
 
   <ng-template #addWheelsToVehicleForm let-context>
@@ -115,7 +127,13 @@
       <label tuiLabel>Wheels count</label>
       <input tuiTextfield [formControl]="wheelsCountControl" />
     </tui-textfield>
-    <button tuiButton type="button" (click)="context.complete()">Add</button>
+    <button
+      tuiButton
+      type="button"
+      (click)="context.complete(); addWheelsToVehicleWithId()"
+    >
+      Add
+    </button>
   </ng-template>
 
   <ng-template #vehicleTypeForm let-context>
@@ -135,7 +153,7 @@
       class="tui-space_top-3"
       tuiButton
       type="button"
-      (click)="context.complete()"
+      (click)="context.complete(); findVehiclesByType(vehiclesTable)"
     >
       Search
     </button>

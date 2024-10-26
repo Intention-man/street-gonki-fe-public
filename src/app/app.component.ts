@@ -19,6 +19,7 @@ import {
   TuiButton,
   TuiDataList,
   TuiDialogContext,
+  TuiDialogOptions,
   TuiDialogService,
   TuiDropdown,
   TuiIcon,
@@ -123,6 +124,8 @@ export class AppComponent {
   protected switch = false;
   protected readonly routes = appRoutes;
   protected readonly foundVehiclesByType = signal<Vehicle[]>([]);
+  protected readonly removeVehicleByFuelMode =
+    signal<RemoveVehiclesWithFuelConsumptionMode>('all');
 
   protected readonly fuelConsumptionControl = new FormControl<number>(0);
   protected readonly vehicleIdControl = new FormControl<number>(
@@ -155,28 +158,17 @@ export class AppComponent {
       });
   }
 
-  removeVehiclesWithFuelConsumption(
-    fuelConsumptionForm: PolymorpheusContent<TuiDialogContext>,
-    mode: RemoveVehiclesWithFuelConsumptionMode
-  ): void {
-    this.dialogService
-      .open(fuelConsumptionForm, {
-        label: 'Remove by fuel consumption',
-      })
-      .pipe(tuiTakeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        complete: () => {
-          const query = this.fuelConsumptionControl.value!;
+  removeVehiclesWithFuelConsumption(): void {
+    const mode = this.removeVehicleByFuelMode();
+    const query = this.fuelConsumptionControl.value!;
 
-          this.vehicleService
-            .removeVehiclesWithFuelConsumption$(query, mode)
-            .pipe(
-              switchMap(() => this.alertService.open('Removed')),
-              tuiTakeUntilDestroyed(this.destroyRef)
-            )
-            .subscribe();
-        },
-      });
+    this.vehicleService
+      .removeVehiclesWithFuelConsumption$(query, mode)
+      .pipe(
+        switchMap(() => this.alertService.open('Removed')),
+        tuiTakeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
   }
 
   showFuelConsumptionsSet(): void {
@@ -194,52 +186,45 @@ export class AppComponent {
   }
 
   findVehiclesByType(
-    vehicleTypeForm: PolymorpheusContent<TuiDialogContext>,
     vehiclesTable: PolymorpheusContent<TuiDialogContext>
   ): void {
-    this.dialogService
-      .open(vehicleTypeForm, {
-        label: 'Find by vehicle type',
-      })
-      .pipe(tuiTakeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        complete: () => {
-          const query = nullIfEquals(this.vehicleTypeControl.value, '-');
+    const query = nullIfEquals(this.vehicleTypeControl.value, '-');
 
-          this.vehicleService
-            .getVehiclesByType$(query as VehicleType | null)
-            .pipe(
-              tap((vehicles) => this.foundVehiclesByType.set(vehicles)),
-              switchMap(() => this.dialogService.open(vehiclesTable)),
-              tuiTakeUntilDestroyed(this.destroyRef)
-            )
-            .subscribe();
-        },
-      });
+    this.vehicleService
+      .getVehiclesByType$(query as VehicleType | null)
+      .pipe(
+        tap((vehicles) => this.foundVehiclesByType.set(vehicles)),
+        switchMap(() => this.dialogService.open(vehiclesTable)),
+        tuiTakeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
   }
 
-  addWheelsToVehicleWithId(
-    vehicleIdForm: PolymorpheusContent<TuiDialogContext>
+  openDialog(
+    dialogTemplate: PolymorpheusContent<TuiDialogContext>,
+    label: string,
+    options?: Partial<TuiDialogOptions<Record<string, unknown>>>
   ): void {
     this.dialogService
-      .open(vehicleIdForm, {
-        label: 'Add wheels to vehicle',
+      .open(dialogTemplate, {
+        label,
+        ...options,
       })
       .pipe(tuiTakeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        complete: () => {
-          const id = this.fuelConsumptionControl.value!;
-          const wheelsCount = this.wheelsCountControl.value!;
+      .subscribe();
+  }
 
-          this.vehicleService
-            .addWheelsToVehicle$(id, wheelsCount)
-            .pipe(
-              switchMap(() => this.alertService.open('Added')),
-              tuiTakeUntilDestroyed(this.destroyRef)
-            )
-            .subscribe();
-        },
-      });
+  addWheelsToVehicleWithId() {
+    const id = this.vehicleIdControl.value!;
+    const wheelsCount = this.wheelsCountControl.value!;
+
+    this.vehicleService
+      .addWheelsToVehicle$(id, wheelsCount)
+      .pipe(
+        switchMap(() => this.alertService.open('Added')),
+        tuiTakeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
   }
 
   logout(): void {

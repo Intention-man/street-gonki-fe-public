@@ -161,7 +161,7 @@ export class VehicleFormComponent {
       parseInt(formValues.capacity),
       parseInt(formValues.distanceTravelled),
       parseFloat(formValues.fuelConsumption),
-      formValues.fuelType.existing,
+      formValues.fuelType,
       owner,
       formValues.canBeEditedByAdmin,
       null,
