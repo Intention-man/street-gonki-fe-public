@@ -122,16 +122,23 @@
     <tui-select
       class="tui-form__row"
       [formControl]="vehicleTypeControl"
-      tuiTextfieldSize="s"
+      tuiTextfieldSize="l"
     >
       Type
       <input tuiTextfieldLegacy placeholder="Type" />
       <tui-data-list-wrapper
         *tuiDataList
-        [items]="['-', 'plane', 'submarine', 'motorcycle', 'spaceship']"
+        [items]="['-', 'PLANE', 'SUBMARINE', 'MOTORCYCLE', 'SPACESHIP']"
       />
     </tui-select>
-    <button tuiButton type="button" (click)="context.complete()">Search</button>
+    <button
+      class="tui-space_top-3"
+      tuiButton
+      type="button"
+      (click)="context.complete()"
+    >
+      Search
+    </button>
   </ng-template>
 
   <ng-template #vehiclesTable let-context>

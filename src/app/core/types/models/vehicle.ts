@@ -68,13 +68,13 @@ export class Vehicle extends Model {
     return new Vehicle(
       dao.name,
       Coordinates.fromGetDao!(dao.coordinates) as Coordinates,
-      dao.type,
+      (dao.type?.toUpperCase() as VehicleType) ?? null,
       dao.enginePower,
       dao.numberOfWheels,
       dao.capacity,
       dao.distanceTravelled,
       dao.fuelConsumption,
-      dao.fuelType,
+      (dao.fuelType?.toUpperCase() as FuelType) ?? null,
       Owner.fromGetDao!(dao.owner) as Owner,
       dao.canBeEditedByAdmin,
       dao.id,
@@ -106,16 +106,16 @@ export class Coordinates extends Model {
 }
 
 export enum VehicleType {
-  Plane = 'plane',
-  Submarine = 'submarine',
-  Motorcycle = 'motorcycle',
-  Spaceship = 'spaceship',
+  Plane = 'PLANE',
+  Submarine = 'SUBMARINE',
+  Motorcycle = 'MOTORCYCLE',
+  Spaceship = 'SPACESHIP',
 }
 
 export enum FuelType {
-  Gasoline = 'gasoline',
-  Alcohol = 'alcohol',
-  Nuclear = 'nuclear',
+  Gasoline = 'GASOLINE',
+  Alcohol = 'ALCOHOL',
+  Nuclear = 'NUCLEAR',
 }
 
 export class Owner extends Model {
