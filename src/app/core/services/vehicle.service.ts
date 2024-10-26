@@ -115,13 +115,14 @@ export class VehicleService extends AbstractVehicleService {
   }
 
   override addWheelsToVehicle$(id: number, wheels: number): Observable<void> {
-    const url = `${environment.apiUrl}/add-wheels/${id}`;
+    const url = `${environment.apiUrl}/vehicles/add-wheels/${id}`;
 
     return this.http.post<void>(
       url,
-      { additionalWheels: wheels },
+      {},
       {
         headers: this.authService.getAuthHeaders(),
+        params: { additionalWheels: wheels },
       }
     );
   }
