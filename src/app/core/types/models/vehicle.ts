@@ -106,16 +106,16 @@ export class Coordinates extends Model {
 }
 
 export enum VehicleType {
-  Plane = 'plane',
-  Submarine = 'submarine',
-  Motorcycle = 'motorcycle',
-  Spaceship = 'spaceship',
+  Plane = 'PLANE',
+  Submarine = 'SUBMARINE',
+  Motorcycle = 'MOTORCYCLE',
+  Spaceship = 'SPACESHIP',
 }
 
 export enum FuelType {
-  Gasoline = 'gasoline',
-  Alcohol = 'alcohol',
-  Nuclear = 'nuclear',
+  Gasoline = 'GASOLINE',
+  Alcohol = 'ALCOHOL',
+  Nuclear = 'NUCLEAR',
 }
 
 export class Owner extends Model {

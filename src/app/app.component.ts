@@ -178,7 +178,7 @@ export class AppComponent {
       .getFuelConsumptionSet$()
       .pipe(
         switchMap((set) =>
-          this.dialogService.open(set.toString(), {
+          this.dialogService.open(set, {
             label: 'Fuel consumptions set',
           })
         ),
