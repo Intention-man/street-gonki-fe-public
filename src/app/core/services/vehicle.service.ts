@@ -100,13 +100,9 @@ export class VehicleService extends AbstractVehicleService {
     const url = `${environment.apiUrl}/vehicles/find-by-type`;
 
     return this.http
-      .post<VehicleGetDao[]>(
-        url,
-        { type },
-        {
-          headers: this.authService.getAuthHeaders(),
-        }
-      )
+      .post<VehicleGetDao[]>(url, type, {
+        headers: this.authService.getAuthHeaders(),
+      })
       .pipe(
         mergeMap((dao) => dao),
         map((dao) => Vehicle.fromGetDao(dao)),
