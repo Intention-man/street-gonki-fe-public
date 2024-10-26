@@ -58,11 +58,7 @@
     }
   </div>
 
-  <tui-select
-    class="tui-form__row"
-    formControlName="type"
-    tuiTextfieldSize="s"
-  >
+  <tui-select class="tui-form__row" formControlName="type" tuiTextfieldSize="s">
     Type
     <input tuiTextfieldLegacy placeholder="Type" />
     <tui-data-list-wrapper
@@ -71,13 +67,15 @@
     />
   </tui-select>
 
-  <tui-input-number formControlName="enginePower">Engine pow</tui-input-number>
+  <tui-input-number class="tui-form__row" formControlName="enginePower"
+    >Engine pow</tui-input-number
+  >
   <tui-error
     formControlName="enginePower"
     [error]="[] | tuiFieldError | async"
   />
 
-  <tui-input-number formControlName="numberOfWheels"
+  <tui-input-number class="tui-form__row" formControlName="numberOfWheels"
     >Number of wheels</tui-input-number
   >
   <tui-error
@@ -85,7 +83,7 @@
     [error]="[] | tuiFieldError | async"
   />
 
-  <tui-input-number formControlName="distanceTravelled"
+  <tui-input-number class="tui-form__row" formControlName="distanceTravelled"
     >Distance travelled</tui-input-number
   >
   <tui-error
@@ -93,13 +91,18 @@
     [error]="[] | tuiFieldError | async"
   />
 
-  <tui-input-number formControlName="fuelConsumption"
+  <tui-input-number class="tui-form__row" formControlName="fuelConsumption"
     >Fuel consumption</tui-input-number
   >
   <tui-error
     formControlName="fuelConsumption"
     [error]="[] | tuiFieldError | async"
   />
+
+  <tui-input-number class="tui-form__row" formControlName="capacity"
+    >Capacity</tui-input-number
+  >
+  <tui-error formControlName="capacity" [error]="[] | tuiFieldError | async" />
 
   <tui-select
     class="tui-form__row"

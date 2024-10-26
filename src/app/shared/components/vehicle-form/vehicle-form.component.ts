@@ -119,21 +119,21 @@ export class VehicleFormComponent {
           this.context.data.item ?? Vehicle.createBlank(dependencies);
 
         this.vehicleForm = this.fb.group({
-          id: [vehicle.id], // Assuming default id starts from 0
-          name: [vehicle.name, [Validators.required, Validators.minLength(1)]], // Vehicle name is required
+          id: [vehicle.id],
+          name: [vehicle.name, [Validators.required, Validators.minLength(1)]],
           coordinates: this.fb.group({
             existing: [vehicle.coordinates],
-            x: [vehicle.coordinates.x, Validators.required], // X and Y coordinates
-            y: [vehicle.coordinates.y, Validators.required],
+            x: [vehicle.coordinates.x],
+            y: [vehicle.coordinates.y],
           }),
-          creationDate: [vehicle.creationDate, Validators.required], // Default to current date
+          creationDate: [vehicle.creationDate],
           type: [vehicle.type],
           enginePower: [vehicle.enginePower, Validators.min(1)],
           numberOfWheels: [vehicle.numberOfWheels, Validators.min(1)],
           capacity: [vehicle.capacity, Validators.min(1)],
           distanceTravelled: [vehicle.distanceTravelled, Validators.min(1)],
           fuelConsumption: [vehicle.fuelConsumption, Validators.min(0.1)],
-          fuelType: [vehicle.fuelType, Validators.required],
+          fuelType: [vehicle.fuelType],
           canBeEditedByAdmin: [false],
         });
 

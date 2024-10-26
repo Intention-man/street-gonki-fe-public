@@ -53,7 +53,7 @@ export class Vehicle extends Model {
       null,
       null,
       4,
-      0,
+      1,
       null,
       null,
       FuelType.Alcohol,
