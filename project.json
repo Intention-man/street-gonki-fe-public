@@ -1,5 +1,5 @@
 {
-  "name": "dragonia-fe-no-ssr",
+  "name": "street-gonki-fe-no-ssr",
   "$schema": "node_modules/nx/schemas/project-schema.json",
   "includedScripts": [],
   "projectType": "application",
@@ -11,7 +11,7 @@
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/dragonia-fe-no-ssr",
+        "outputPath": "dist/street-gonki-fe-no-ssr",
         "index": "./src/index.html",
         "browser": "./src/main.ts",
         "polyfills": ["zone.js"],
@@ -63,10 +63,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "buildTarget": "dragonia-fe-no-ssr:build:production"
+          "buildTarget": "street-gonki-fe-no-ssr:build:production"
         },
         "development": {
-          "buildTarget": "dragonia-fe-no-ssr:build:development"
+          "buildTarget": "street-gonki-fe-no-ssr:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -74,7 +74,7 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "buildTarget": "dragonia-fe-no-ssr:build"
+        "buildTarget": "street-gonki-fe-no-ssr:build"
       }
     },
     "lint": {
@@ -93,9 +93,9 @@
     "serve-static": {
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "dragonia-fe-no-ssr:build",
+        "buildTarget": "street-gonki-fe-no-ssr:build",
         "port": 4200,
-        "staticFilePath": "dist/dragonia-fe-no-ssr/browser",
+        "staticFilePath": "dist/street-gonki-fe-no-ssr/browser",
         "spa": true
       }
     }

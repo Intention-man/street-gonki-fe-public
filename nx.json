@@ -69,5 +69,5 @@
       "unitTestRunner": "jest"
     }
   },
-  "defaultProject": "dragonia-fe-no-ssr"
+  "defaultProject": "street-gonki-fe-no-ssr"
 }

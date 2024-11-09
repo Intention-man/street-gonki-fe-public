@@ -1,8 +1,8 @@
 export default {
-  displayName: 'dragonia-fe-no-ssr',
+  displayName: 'street-gonki-fe-no-ssr',
   preset: './jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: './coverage/dragonia-fe-no-ssr',
+  coverageDirectory: './coverage/street-gonki-fe-no-ssr',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
